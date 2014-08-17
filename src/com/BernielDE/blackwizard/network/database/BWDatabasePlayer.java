@@ -22,6 +22,10 @@ public final class BWDatabasePlayer {
 	
 	private BWTable TABLE_UTIL;
 	
+	private BWTable TABLE_TOKEN;
+	
+//	private String[] colums = {"token", "rank", "isRegistered"};
+	
 	// 	private String[] columns = {"uuid", "name", "isRegistered", "online", "userPlus", "vote_Time_left", "warn", "denied_to_join", "mute", "spy", "isBanned", "reason"};
 
 	public BWDatabasePlayer(String uuid) {
@@ -30,6 +34,7 @@ public final class BWDatabasePlayer {
 		this.sql = BWMainClass.instance().getMySQL();
 		Validate.notNull(sql);
 		TABLE_UTIL = new BWTable(sql, BWMainClass.DATABASE_PLAYER_TABLE);
+		TABLE_TOKEN = new BWTable(sql, "bw_util_token");
 //		TABLE_UTIL = sql.getTable(BWMainClass.DATABASE_PLAYER_TABLE);
 	}
 	
@@ -40,6 +45,7 @@ public final class BWDatabasePlayer {
 		this.sql = BWMainClass.instance().getMySQL();
 		Validate.notNull(sql);
 		TABLE_UTIL = new BWTable(sql, BWMainClass.DATABASE_PLAYER_TABLE);
+		TABLE_TOKEN = new BWTable(sql, "bw_util_token");
 //		TABLE_UTIL = sql.getTable(BWMainClass.DATABASE_PLAYER_TABLE);
 	}
 	
@@ -50,11 +56,16 @@ public final class BWDatabasePlayer {
 		this.sql = BWMainClass.instance().getMySQL();
 		Validate.notNull(sql);
 		TABLE_UTIL = new BWTable(sql, BWMainClass.DATABASE_PLAYER_TABLE);
+		TABLE_TOKEN = new BWTable(sql, "bw_util_token");
 //		TABLE_UTIL = sql.getTable(BWMainClass.DATABASE_PLAYER_TABLE);
 	}
 	
 	public boolean tableExist() {
 		return TABLE_UTIL.exists();
+	}
+	
+	public boolean tableTokenExist() {
+		return TABLE_TOKEN.exists();
 	}
 	
 	private String UUID;
@@ -686,5 +697,158 @@ public final class BWDatabasePlayer {
 //		catch (Exception e) {
 //			e.printStackTrace();
 //		}
+	}
+	
+	private String tableTID = "id_table_bw_util_token";	
+	
+	public String getTableTID() {
+		return this.tableTID;
+	}
+	
+	private String tableUID = "id_table_" + BWMainClass.DATABASE_PLAYER_TABLE;
+	
+	public String getTableUID() {
+		return this.tableUID;
+	}
+	
+	private int tableID;
+	
+	public int getTableID() {
+		try {
+			this.tableID = this.TABLE_UTIL.getInt(getTableUID(), "uuid", uuid);
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return this.tableID;
+	}
+	
+	private int token;
+	
+	public int getToken() {
+		try {
+			token = TABLE_TOKEN.getInt("token", getTableTID(), getTableID());
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return this.token;
+	}
+	
+	public void setToken(int t) {
+		try {
+			token = TABLE_TOKEN.getInt("token", getTableTID(), getTableID());
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		this.token = this.token + t;
+		
+		String[] column = {"token"};
+		Object[] values = {this.token};
+		
+		try {
+			this.TABLE_TOKEN.updateEntry(column, values, getTableTID(), getTableID());
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private String rank;
+	
+	public boolean hasRank() {
+		try {
+			rank = this.TABLE_TOKEN.getString("rank", getTableTID(), getTableID());
+			
+			if(rank.equals("null")) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public void setRank(String name) {
+		try {
+			rank = this.TABLE_TOKEN.getString("rank", getTableTID(), getTableID());
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		this.rank = name;
+		
+		String[] columns = {"rank"};
+		Object[] v = {this.rank};
+		
+		try {
+			this.TABLE_TOKEN.updateEntry(columns, v, getTableTID(), getTableID());
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String getRank() {
+		try {
+			rank = this.TABLE_TOKEN.getString("rank", getTableTID(), getTableID());
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return this.rank;
+	}
+	
+	private int registeredTID = 0;
+	
+	private boolean registeredT = false;
+	
+	public boolean isRegisteredT() {
+		try {
+			registeredTID = TABLE_TOKEN.getInt("isRegistered", getTableTID(), getTableID());
+			
+			if(registeredTID == 0) {
+				return registeredT = false;
+			}
+			else {
+				return registeredT = true;
+			}
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public void setRegisteredT() {
+		Object[] vT = {1};
+		String[] column = {"isRegistered"};
+		
+		try {
+			TABLE_TOKEN.updateEntry(column, vT, getTableTID(), getTableID());
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void unregisterT() {
+		Object[] vT = {0};
+		String[] column = {"isRegistered"};
+		
+		try {
+			TABLE_TOKEN.updateEntry(column, vT, getTableTID(), getTableID());
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
