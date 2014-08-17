@@ -2,15 +2,31 @@ package com.BernielDE.blackwizard.main;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.BernielDE.blackwizard.network.database.BWMySQLConnection;
+
 public class BWMainClass extends JavaPlugin {
+	
+	static BWMainClass bwmc;
+	
+	public static BWMainClass instance() {
+		return bwmc;
+	}
+	
+	public static String DATABASE_PLAYER_TABLE = "bw_utildb_player";
+	
+	private BWMySQLConnection sql;
 	
 	@Override
 	public void onEnable() {
-		System.out.println("[BWTokenShop] Plugin geladen..");
+		try {
+			this.sql = new BWMySQLConnection(this);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
-	private int getID() {
-		return 0;
+	public BWMySQLConnection getMySQL() {
+		return this.sql;
 	}
-
 }
