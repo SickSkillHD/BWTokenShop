@@ -8,5 +8,9 @@ public class BWMainClass extends JavaPlugin {
 	public void onEnable() {
 		System.out.println("[BWTokenShop] Plugin geladen..");
 	}
+	
+	private int getID() {
+		return 0;
+	}
 
 }
